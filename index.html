@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>CaseStudy</title>
+    <link href="index.css" rel="stylesheet" type="text/css" />
+    <style>
+       #map {
+        height: 400px;
+        width: 100%;
+       }
+    </style>
+  </head>
+  <h1>Find a Physician</h1>
+  <h3>Enter a zip code of physician's address from data set</h3>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places"></script>
+  <form>
+    <label for="zip">Zip Code:</label>
+    <input type="text" id="address" placeholder="12345" autofocus></input>
+    <input type="button" value="Submit" onclick="codeAddress();"></input>
+  </form>
+  <div id="map"></div>
+  <div id="text">
+
+  <body>
+    <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
+    <script src="./papaparse.min.js"></script>
+    <script src="./js.cookie.js"></script>
+    <script>
+      //local variables for dropping pin
+      var geocoder;
+      var map;
+      var infowindow;
+
+      /*
+      *This portion searches the data set to find physician
+      *was not able to finish this part
+      */
+      function startSearch(data) {
+
+        var resultsFirstName = [];
+        var resultsMiddleName = [];
+        var resultsLastName = [];
+        var resultsFullName = [];
+
+        //need to change this to the form variable or cookie
+        //NEED FORMS HERE!
+        var firstNameSearch = "Dan";
+        var middleNameSearch = "R";
+        var lastNameSearch = "";
+
+        for(var i=0; i<data.length; i++) {
+          for(key in data[i]) {
+            if(data[i][key].indexOf(firstNameSearch)!=-1) {
+              resultsFullName.push(data[i]);
+            }
+          }
+        }
+
+        //now search resultsFirstName as new array to cut down search time
+        //this will drill down into the right person
+        for(var i=0; i<data.length; i++) {
+          for(key in resultsFullName[i]) {
+            if(resultsFullName[i][key].indexOf(middleNameSearch)!=-1) {
+              resultsMiddleName.push(resultsFullName[i]);
+            }
+          }
+        }
+
+        for(var i=0; i<data.length; i++) {
+          for(key in data[i]) {
+            if(data[i][key].indexOf(lastNameSearch)!=-1) {
+              resultsLastName.push(data[i]);
+            }
+          }
+        }
+
+        //POSSIBLY AN IF STATEMENT AFTER YOU HAVE FOUND THE PERSON
+
+        //how do i dynamically get this data?
+          var testing = data["0"]["Recipient_Primary_Business_Street_Address_Line1"]
+          //Data is usable here
+          console.log(data);
+          //loop through all numbers and get all names
+          //loop through all numbers and get all addresses
+          // console.log(resultsFirstName);
+          console.log(resultsMiddleName);
+      }
+
+
+      /*
+      *This portion parses the data set
+      */
+      function parseData(url, callBack) {
+          Papa.parse(url, {
+              header: true,
+              delimiter: ",",
+              download: true,
+              dynamicTyping: false,
+              complete: function(results) {
+                  callBack(results.data);
+              }
+          });
+      }
+
+      parseData("./RESEARCH3.csv", startSearch);
+
+      /*
+      *This portion displays google maps
+      */
+      function initialize() {
+        geocoder = new google.maps.Geocoder();
+        var loca = new google.maps.LatLng(41.7475, -74.0872);
+
+        map = new google.maps.Map(document.getElementById('map'), {
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          center: loca,
+          zoom: 8
+        });
+
+      }
+
+      function callback(results, status) {
+        if (status == google.maps.places.PlacesServiceStatus.OK) {
+          for (var i = 0; i < results.length; i++) {
+            createMarker(results[i]);
+          }
+        }
+      }
+
+      function codeAddress() {
+        var address = document.getElementById("address").value;
+        geocoder.geocode({
+          'address': address
+        }, function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+            map.setCenter(results[0].geometry.location);
+            var marker = new google.maps.Marker({
+              map: map,
+              position: results[0].geometry.location
+            });
+            var request = {
+              location: results[0].geometry.location,
+              radius: 50000,
+            };
+            infowindow = new google.maps.InfoWindow();
+            var service = new google.maps.places.PlacesService(map);
+            service.nearbySearch(request, callback);
+          } else {
+            alert("Geocode was not successful for the following reason: " + status);
+          }
+        });
+      }
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+  </script>
+  </body>
+</html>

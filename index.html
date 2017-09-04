@@ -47,14 +47,14 @@
 
         //need to change this to the form variable or cookie
         //NEED FORMS HERE!
-        var firstNameSearch = "Dan";
-        var middleNameSearch = "R";
-        var lastNameSearch = "";
+        var firstNameSearch = null;
+        var middleNameSearch = null;
+        var lastNameSearch = null;
 
         for(var i=0; i<data.length; i++) {
           for(key in data[i]) {
             if(data[i][key].indexOf(firstNameSearch)!=-1) {
-              resultsFullName.push(data[i]);
+              resultsFirstName.push(data[i]);
             }
           }
         }
@@ -62,9 +62,9 @@
         //now search resultsFirstName as new array to cut down search time
         //this will drill down into the right person
         for(var i=0; i<data.length; i++) {
-          for(key in resultsFullName[i]) {
-            if(resultsFullName[i][key].indexOf(middleNameSearch)!=-1) {
-              resultsMiddleName.push(resultsFullName[i]);
+          for(key in data[i]) {
+            if(data[i][key].indexOf(middleNameSearch)!=-1) {
+              resultsMiddleName.push(data[i]);
             }
           }
         }
@@ -79,14 +79,14 @@
 
         //POSSIBLY AN IF STATEMENT AFTER YOU HAVE FOUND THE PERSON
 
-        //how do i dynamically get this data?
-          var testing = data["0"]["Recipient_Primary_Business_Street_Address_Line1"]
-          //Data is usable here
-          console.log(data);
-          //loop through all numbers and get all names
-          //loop through all numbers and get all addresses
-          // console.log(resultsFirstName);
-          console.log(resultsMiddleName);
+        // var testing = data["0"]["Recipient_Primary_Business_Street_Address_Line1"]
+        //Data is usable here
+        console.log(data);
+        //loop through all numbers and get all names
+        //loop through all numbers and get all addresses
+        console.log(resultsFirstName);
+        console.log(resultsMiddleName);
+        console.log(resultsLastName);
       }
 
 
